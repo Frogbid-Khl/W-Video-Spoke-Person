@@ -1,94 +1,107 @@
-let SwiperTop = new Swiper('.swiper--top', {
-    spaceBetween: 0,
-    centeredSlides: true,
-    speed: 6000,
-    autoplay: {
-        delay: 1,
-    },
-    loop: true,
-    slidesPerView:'auto',
-    allowTouchMove: false,
-    disableOnInteraction: true
-});
+$(document).ready(function () {
 
-let SwiperBottom = new Swiper('.swiper--bottom', {
-    spaceBetween: 0,
-    centeredSlides: true,
-    speed: 6000,
-    autoplay: {
-        delay: 1,
-        reverseDirection: true
-    },
-    loop: true,
-    loopedSlides: 15,
-    slidesPerView:'auto',
-    allowTouchMove: false,
-    disableOnInteraction: true
-});
+    /*=========================================
+        # Preload Spinner
+    =========================================*/
+    $(window).on('load', function(){
+        setTimeout(removeLoader, 250);
+    });
+    function removeLoader(){
+        $( ".preloadSpinner" ).fadeOut(200, function() {
+            $( ".preloadSpinner" ).remove();  
+        });  
+    }
 
-setCookie('width', getWidth());
+    /*==================================================
+        Parallax
+	==================================================*/
+	if ($(".parallax").length) {
+        $('.parallax').jarallax();
+    }
 
-window.setInterval(async function () {
-    if (getWidth() !== parseInt(getCookie('width'))){
-        setCookie('width', getWidth());
+    /*==================================================
+        Application Form
+    ==================================================*/
 
-        $(".swiper-container").each(function(){
-            this.swiper.destroy();
-        });
-
-
-        new Swiper('.swiper--top', {
-            spaceBetween: 0,
-            centeredSlides: true,
-            speed: 6000,
-            autoplay: {
-                delay: 1,
+    if ($("#application-form").length) {
+		$("#application-form").validate({
+            errorPlacement: function(error,element) {
+                return true;
             },
-            loop: true,
-            slidesPerView:'auto',
-            allowTouchMove: false,
-            disableOnInteraction: true
-        });
-
-        new Swiper('.swiper--bottom', {
-            spaceBetween: 0,
-            centeredSlides: true,
-            speed: 6000,
-            autoplay: {
-                delay: 1,
-                reverseDirection: true
+            rules: {
+                full_name: {
+                    required: true,
+                    minlength: 3
+                },
+                email: {
+                    required: true,
+                    email: true
+                },
+                phone_number: {
+                    required: true,
+                    number: true,
+                    minlength: 10,
+                    maxlength: 10
+                },
+                average_revenue: {
+                    required: true,
+                },
+                thing_holding_you_back: {
+                    required: true,
+                },
+                good_fit_for_your_business: {
+                    required: true,
+                },
             },
-            loop: true,
-            loopedSlides: 15,
-            slidesPerView:'auto',
-            allowTouchMove: false,
-            disableOnInteraction: true
+            submitHandler: function(form) {
+				var formData = $('#application-form').serialize();
+				$.ajax({
+					type: 'POST',
+					url: 'assets/php/order-form.php',
+					dataType: "json",
+					data: formData,
+					success: function (data) {
+						if (data.success) {
+							$('.form-status').addClass('alert alert-success');
+							$('.form-status').text('Your Message Has been Sent Successfully');
+							form.submit();
+							$('.form-status').slideDown().delay(3000).slideUp();
+							$("#application-form").trigger("reset");
+							window.location.href = 'thank-you.html';
+						} else {
+							$('.form-status').addClass('alert alert-danger');
+							$('.form-status').text('Error Occurred, Please Try Again');
+							$('.form-status').slideDown().delay(3000).slideUp();
+						}
+					},
+					error: function (xhr, status, error) {
+						$('.form-status').addClass('alert alert-danger');
+						$('.form-status').text('Something Went Wrong');
+						$('.form-status').slideDown().delay(3000).slideUp();
+					}
+				});
+			}
         });
     }
-}, 2000);
 
+    /* ================================================== */
+	/* Footer Copyrights Year. */
+	/* ================================================== */
+	document.getElementById("copyright_year").innerHTML = new Date().getFullYear();
 
-function getWidth() {
-    return Math.max(
-        document.body.scrollWidth,
-        document.documentElement.scrollWidth,
-        document.body.offsetWidth,
-        document.documentElement.offsetWidth,
-        document.documentElement.clientWidth
-    );
-}
-
-function setCookie(name, value) {
-    document.cookie = name + "=" + value + "; path=/";
-}
-
-function getCookie(name) {
-    let nameEQ = name + "=";
-    let ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-    }
-    return null;
-}
+	/*=========================================
+		## Back To Top
+	=========================================*/
+	$(window).scroll(function(){ 
+        if ($(this).scrollTop() > 100) { 
+            $('.backtotop').fadeIn(100);
+        } else { 
+            $('.backtotop').fadeOut(100); 
+        } 
+    }); 
+    $('.backtotop').click(function(){ 
+        $("html, body").animate({ scrollTop: 0 }, 100); 
+        return false; 
+    });
+    
+});
