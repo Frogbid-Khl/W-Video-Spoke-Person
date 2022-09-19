@@ -8,8 +8,8 @@ $(document).ready(function () {
     });
     function removeLoader(){
         $( ".preloadSpinner" ).fadeOut(200, function() {
-            $( ".preloadSpinner" ).remove();  
-        });  
+            $( ".preloadSpinner" ).remove();
+        });
     }
 
     /*==================================================
@@ -92,16 +92,28 @@ $(document).ready(function () {
 	/*=========================================
 		## Back To Top
 	=========================================*/
-	$(window).scroll(function(){ 
-        if ($(this).scrollTop() > 100) { 
+	$(window).scroll(function(){
+        if ($(this).scrollTop() > 100) {
             $('.backtotop').fadeIn(100);
-        } else { 
-            $('.backtotop').fadeOut(100); 
-        } 
-    }); 
-    $('.backtotop').click(function(){ 
-        $("html, body").animate({ scrollTop: 0 }, 100); 
-        return false; 
+        } else {
+            $('.backtotop').fadeOut(100);
+        }
     });
-    
+    $('.backtotop').click(function(){
+        $("html, body").animate({ scrollTop: 0 }, 100);
+        return false;
+    });
+
+});
+
+$(document).ready(function(){
+    $(".owl-carousel").owlCarousel({
+        items:3,
+//      autoplay:false,
+        margin:30,
+        loop:true,
+        dots:true
+//      nav:true,
+//      navText:["<i class='fas fa-long-arrow-alt-left'></i>","<i class='fas fa-long-arrow-alt-right'></i>" ]
+    });
 });
